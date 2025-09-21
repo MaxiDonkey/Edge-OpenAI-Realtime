@@ -1,7 +1,7 @@
-## Deployment Diagram - VCL App + WebView2 + OpenAI Realtime
+# Deployment Diagram - VCL App + WebView2 + OpenAI Realtime
 Clarifies the runtime footprint (EXE, WebView2Loader.dll, local web resources) and Internet calls (client_secrets + WebRTC calls).
 
-### Figure 3 - Deployment
+## Figure 3 - Deployment
 This diagram: shows what runs locally vs. what goes over the network.
 
 ```text

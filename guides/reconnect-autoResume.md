@@ -1,7 +1,7 @@
-## Reconnect / AutoResume - PeerConnection loss and recovery
+# Reconnect / AutoResume - PeerConnection loss and recovery
 Documents robustness: disconnection events, clean close, reconnection, and optional re-application of parameters/history.
 
-### Figure 5 : Reconnect / AutoResume Sequence
+## Figure 5 : Reconnect / AutoResume Sequence
 This diagram: shows the lifecycle on disconnect (`OnRTPcState = disconnected/failed`), controlled shutdown, and restart; if `AutoResume = True`, re-inject history and re-apply session settings.
 
 ```text

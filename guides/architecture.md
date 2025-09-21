@@ -1,13 +1,13 @@
-## Architecture
-### Three-layer split
+# Architecture
+## Three-layer split
 1. **Realtime (Delphi, UI-free)**, implements Realtime API calls, signaling, turn handling, JSON normalization/hydration, and state.
 2. **Edge/WebView2 (Chromium)**, hosts **RTCPeerConnection**, **MediaStream**, **DataChannel** and minimal audio UI; uses **`window.chrome.webview`** to exchange messages with Delphi. Adapter is **replaceable** later.
 3. **VCL (installable component)**, public surface (properties/methods/events), lightweight settings persistence, and overridable logging/error hooks.
 
-### Orchestration on the Delphi side
+## Orchestration on the Delphi side
 A central type, `TEdgeRealtimeWire`, orchestrates WebView2 navigation, JS init (`RT.init`), Realtime connect (`RT.connect`), signaling (offer/answer/ICE), **DataChannel**, mic capture and Edge playback, and raises events back to the VCL component.
 
-### Figure 1 : Global Architecture (VCL component + native Edge/WebRTC)
+## Figure 1 : Global Architecture (VCL component + native Edge/WebRTC)
 This diagram: gives the overall view (three layers: Realtime, Edge/WebView2, VCL) and their interfaces. The project is structured as Realtime (UI-free), Edge (Chromium/WebRTC) and VCL component; WebRTC runs **inside** Edge/WebView2 (no third-party WebRTC component), using the WebView2 messaging bridge.
 
 ```text

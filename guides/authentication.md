@@ -1,10 +1,10 @@
-## Authentication (ephemeral secrets)
+# Authentication (ephemeral secrets)
 - The long-lived key is resolved **in Delphi** (env/registry) and exchanged for a short-lived **client secret** used by Edge for the session.
 - No durable secret is injected into the page; short TTL; renew on reconnect.
 
 > Session loop example: `ResolveLongKey → POST /client_secret → RT.connect(secret) → WebRTC`.
 
-### Figure 4 : Authentication Flow (API key → client_secrets → session init)
+## Figure 4 : Authentication Flow (API key → client_secrets → session init)
 This diagram: indispensable for a secure client-side integration. The component resolves the key, creates a **short-lived** client_secret, then initializes WebRTC with that bearer; this matches the Realtime API (`client_secrets` + WebRTC `calls`).
 
 ```text
