@@ -108,9 +108,10 @@ The component ships with a demo app that contains the **reference caller**. To a
 - `sample/EdgeAudioWebRC.zip` (project `EdgeAudioWebRC.dproj`).
 
 **Running the demo**
-1. Open `EdgeAudioWebRC.dproj` in Delphi.
-2. Ensure **WebView2 Runtime** is installed.
-3. Build & run (F9).
+1. Unzip the archive
+2. Open `EdgeAudioWebRC.dproj` in Delphi.
+3. Ensure **WebView2 Runtime** is installed.
+4. Build & run (F9).
 
 <p align="center">
   <img src="images/Sample1.png" width="300"/>
@@ -118,6 +119,9 @@ The component ships with a demo app that contains the **reference caller**. To a
 
 >[!NOTE]
 > he code examples use the `Windows 11 MineShaft` custom VCL theme.
+<p align="center">
+  <img src="images/themis.png" width="300"/>
+</p>
 
 <br>
 
