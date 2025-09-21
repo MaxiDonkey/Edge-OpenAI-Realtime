@@ -1,0 +1,143 @@
+html, body {
+  height: 100%;
+  width: 100vw;
+  margin: 0;
+  background:  #272727; 
+  box-sizing: border-box;
+  overflow: hidden;
+}
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  position: relative;
+}
+
+#wave {
+  width: 400px;
+  height: 140px;
+  background:  #272727; 
+  display: block;
+  border-radius: 18px;
+  box-shadow: 0 2px 24px #0006;
+}
+.button-container {
+  position: fixed;
+  left: 50%;
+  bottom: 38px;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 28px;
+  z-index: 10;
+  pointer-events: none;
+}
+.round-btn {
+  pointer-events: all;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: none;
+  background: #212121;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 24px #0008;
+  cursor: pointer;
+  transition: background 0.18s;
+  outline: none;
+  font-size: 28px;
+  color: #29e7ff;
+  user-select: none;
+}
+.round-btn:hover {
+  background: #29e7ff;
+  color: #1b2327;
+  box-shadow: 0 4px 28px #29e7ff44;
+}
+.round-btn.close {
+  color: #ff5555;
+}
+.round-btn.close:hover {
+  background: #ff5555;
+  color: #fff;
+  box-shadow: 0 4px 28px #ff555566;
+}
+.round-btn svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
+#init-message {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  top: calc(50vh - 140px/2 - 56px); 
+  width: max-content;
+  padding: 16px 36px 10px 36px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #777;
+  background: transparent;
+  z-index: 1000;
+  text-align: center;
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.3s;
+  font-family: Tahoma;
+}
+
+#init-message.hide {
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+
+audio#player {
+  display: none;
+}
+
+/* ============================
+   Alert bubble (toast)
+   ============================ */
+:root {
+  --toast-bg: #C74A3A;
+  --toast-shadow: rgba(178, 34, 34, 0.32);
+}
+
+#toast {
+  position: fixed;
+  left: 50%;
+  top: 22px;
+  transform: translateX(-50%);
+  inline-size: 400px;
+  background: var(--toast-bg);
+  color: #fff;
+  border-radius: 16px;
+  padding: 12px 16px;
+  box-shadow: 0 6px 28px var(--toast-shadow);
+
+  z-index: 1200;
+  opacity: 0;
+  pointer-events: none;
+  display: none;
+  transition: opacity .88s ease;
+  font: 600 14px/1.35 Tahoma, system-ui, sans-serif;
+  text-align: center;
+  will-change: opacity;
+}
+
+#toast.show {
+  display: block;
+  opacity: 1;
+}
+
+#toast.fade-out {
+  opacity: 0;
+}
+
+#toast-text {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
