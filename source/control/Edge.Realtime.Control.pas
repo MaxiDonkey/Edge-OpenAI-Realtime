@@ -458,7 +458,6 @@ type
     function IsShuttingDown: Boolean;
     procedure NavigateToEmptyHtml;
     procedure OnErrorDisplay(const Error: string);
-    procedure PartialCleaning;
     procedure PartialCleaningOnError(const Error: string);
     function ResolveApiKey(const Rts: TRealtimeSettings): string;
     procedure SafeUnhookAll;
@@ -930,7 +929,9 @@ begin
     procedure
     begin
       if Assigned(FAudio) then
-        FAudio.DisplayError(Value, DurationMs);
+        FAudio.DisplayError(Value, DurationMs)
+      else
+        ShowMessage(Value);
     end);
 end;
 
@@ -966,22 +967,11 @@ begin
     if Assigned(FOnOpen) then FOnOpen(Self);
 end;
 
-procedure TCustomEdgeRealtimeControl.PartialCleaning;
-begin
-  try
-    SafeUnhookAll;
-  except
-  end;
-
-  FRealtime := nil;
-  FWire := nil;
-  FAudio := nil;
-end;
-
 procedure TCustomEdgeRealtimeControl.PartialCleaningOnError(const Error: string);
 begin
+  InternalShutdown(skFinal);
   OnErrorDisplay(Error);
-  PartialCleaning;
+  DoOnError(Error);
 end;
 
 procedure TCustomEdgeRealtimeControl.Reinitialize;
@@ -1274,9 +1264,6 @@ procedure TCustomEdgeRealtimeControl.InternalShutdown(
   const Kind: TShutdownKind);
 {--- NOTE: We’re making the InternalShutdown method rock solid (belt and suspenders approach). }
 begin
-  {--- Invalidates all previous init callbacks }
-//  Inc(FInitSeq);
-
   {--- In final destruction, a real shutdown is reported }
   if Kind = skFinal then
     FShuttingDown := True;
@@ -1690,12 +1677,10 @@ begin
   Key := ReadEnvFromRegistry('OPENAI_API_KEY');
 
   if Key.Trim.IsEmpty then
-    repeat
-      Key := InputBox('API KEY setter', 'Your OpenAI API KEY', '');
-      if Key.Trim.ToLower = 'exit' then
-        Application.Terminate;
-      SetUserEnvVar('OPENAI_API_KEY', Key);
-    until not Key.Trim.IsEmpty;
+    begin
+      if InputQuery('API KEY setter', 'Your OpenAI API KEY', key) then
+        SetUserEnvVar('OPENAI_API_KEY', Key);
+    end;
 end;
 
 procedure TRealtimeSettings.SetTranscription(const Value: TTranscription);
