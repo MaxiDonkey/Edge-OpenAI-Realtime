@@ -76,16 +76,16 @@ Together, they provide the **full technical picture** behind the POC.
 
 ___
 
-## Quick Demo (POC)
+## Component installation (POC)
 1. **Prereqs**
    - Windows 10+ with **WebView2 Runtime**.
    - Recent Delphi VCL (Win32/Win64).
 2. **Setup**
-   - Install the component package; drop it from the palette; add a `TEdgeBrowser` (or let the component manage its embedded instance).
-3. **Minimal test**
-   - Run the demo app → click **Listen** → speak → hear a spoken reply; observe PC/DC states and input level.
-4. **Barge-in**
-   - Speak while playback is ongoing; observe `OnRTListen` and `OnRTVolumeChanged`.
+   - Install the component package `Edge.Realtime.Design.dpk` 
+
+<p align="center">
+  <img src="images/Component.png" width="300"/>
+</p>
 
 <br>
 
@@ -105,14 +105,26 @@ ___
 ## Caller Example 
 The component ships with a demo app that contains the **reference caller**. To avoid drift, this README **does not copy** the code; refer to:
 
-- `samples/VCLDemo/MainForm.pas` (project `samples/VCLDemo/VCLDemo.dproj`).
+- `sample/EdgeAudioWebRC.zip` (project `EdgeAudioWebRC.dproj`).
 
 **Running the demo**
-1. Open `samples/VCLDemo/VCLDemo.dproj` in Delphi.
+1. Open `EdgeAudioWebRC.dproj` in Delphi.
 2. Ensure **WebView2 Runtime** is installed.
-3. Build & run (F9), click **Listen**, speak, confirm playback and events.
+3. Build & run (F9).
 
-> If the component API evolves, the **demo file is the authoritative source**. If you paste a snippet into the README at release time, copy it **from that file**.
+<p align="center">
+  <img src="images/Sample1.png" width="300"/>
+</p>
+
+>[!NOTE]
+> he code examples use the `Windows 11 MineShaft` custom VCL theme.
+
+<br>
+
+### Redistribution 
+ - Place the web folder next to the executable; an automatic message appears if it’s missing.
+ - Ship WebView2Loader.dll (32/64‑bit) with the executable.  
+
 
 <br>
 
