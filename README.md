@@ -40,233 +40,31 @@ This POC is **strictly** VCL + Edge/WebView2. **FMX is not targeted** because Em
 
 ___
 
-## Architecture
-### Three-layer split
-1. **Realtime (Delphi, UI-free)**, implements Realtime API calls, signaling, turn handling, JSON normalization/hydration, and state.
-2. **Edge/WebView2 (Chromium)**, hosts **RTCPeerConnection**, **MediaStream**, **DataChannel** and minimal audio UI; uses **`window.chrome.webview`** to exchange messages with Delphi. Adapter is **replaceable** later.
-3. **VCL (installable component)**, public surface (properties/methods/events), lightweight settings persistence, and overridable logging/error hooks.
+## Guides
 
-### Orchestration on the Delphi side
-A central type, `TEdgeRealtimeWire`, orchestrates WebView2 navigation, JS init (`RT.init`), Realtime connect (`RT.connect`), signaling (offer/answer/ICE), **DataChannel**, mic capture and Edge playback, and raises events back to the VCL component.
+The README only provides a **concise overview** of the project.  
+For in-depth documentation, design notes, and technical details, see the guides:
 
-### Figure 1 : Global Architecture (VCL component + native Edge/WebRTC)
-This diagram: gives the overall view (three layers: Realtime, Edge/WebView2, VCL) and their interfaces. The project is structured as Realtime (UI-free), Edge (Chromium/WebRTC) and VCL component; WebRTC runs **inside** Edge/WebView2 (no third-party WebRTC component), using the WebView2 messaging bridge.
+- [Architecture](./guides/architecture.md)  
+  Overview of the three-layer split (**Realtime**, **Edge/WebView2**, **VCL**) and orchestration.
 
-```text
-[Application VCL]
-      |
-      v
-[TEdgeRealtimeControl]  (VCL)
-      | uses
-      |---> [Realtime Engine (IRealTime)] --(client_secrets)--> [OpenAI Realtime API]
-      |                                         (éphémère)
-      |
-      v
-[TEdgeRealtimeWire]  --expose--> IDataChannel
-      |                 \-------> IEdgeAudio
-      | uses
-      v
-[Edge WebView2 (Chromium)]
-      |
-      v loads
-[Audio UI + JS]
-      |
-      v provides
-[window.RT API]
-   |        \
-   | WebRTC  \ HTTP signaling → /v1/realtime/calls (OpenAI)
-   v
-[RTCPeerConnection] -- DataChannel "oai-events" --> (events)
-          |
-          +-- Remote Audio Track --> IEdgeAudio.Player
-```
+- [Authentication](./guides/authentication.md)  
+  How long-lived keys are resolved in Delphi and exchanged for short-lived **ephemeral secrets**.
 
-Notes:
-- DataChannel **“oai-events”** carries Realtime events (e.g., `session.update`, `conversation.item.create`, `response.create`).
-- Remote audio track is rendered via Edge and surfaced as `IEdgeAudio` in Delphi.
-- `TEdgeRealtimeControl` (VCL) → `TEdgeRealtimeWire` (bridge) → Edge page exposing `window.RT`.
+- [Component Surface](./guides/component-surface.md)  
+  Public API of the VCL component (properties, methods, events).
 
-<br>
+- [Deployment Diagram](./guides/deployment-diagram.md)  
+  Runtime footprint (EXE, WebView2Loader.dll, local web resources) and external calls.
 
-___
+- [End-to-End Sequence](./guides/end-to-end-Sequence.md)  
+  Step-by-step flow from initialization to WebRTC negotiation and DataChannel usage.
 
-## End-to-End Sequence (high level)
-1. **Edge init** → load an embedded page that exposes an `RT` JS module.
-2. **Realtime session** → Delphi resolves long key (env/registry) and creates an **ephemeral client secret** via a server endpoint.
-3. **WebRTC negotiation** → `RT.connect(secret)` creates an offer; SDP is posted back to Delphi; Delphi calls Realtime to get the answer; ICE flows via the bridge.
-4. **Audio in/out** → mic via `getUserMedia`; default **semantic_vad** for turns; TTS responses are played back by Edge.
-5. **Interaction** → user **barge-in**; **DataChannel** for commands (e.g., `commit`, `response.create`) and lightweight telemetry.
+- [Reconnect & AutoResume](./guides/reconnect-autoResume.md)  
+  Lifecycle on disconnection, controlled shutdown, reconnection, and optional history/session resume.
 
-### Figure 2 : Runtime Sequence (init, negotiation, Realtime exchange)
-This diagram: makes explicit the initialization chain up to DataChannel exchanges (`session.update`, `conversation.item.create`, `response.create`). The POC creates an **ephemeral** client_secret then negotiates via `/v1/realtime/calls`; channel **“oai-events”** is used for Realtime events.
-
-```text
-  Application VCL
-      |
-  TEdgeRealtimeControl.InitializeRuntime
-      |
-      +--> Resolve API key -> Realtime Engine -> Create ClientSecret [Ephemeral]
-      |                                               (ClientSecret.Value)
-      |
-      v
-  Edge WebView2 (navigate to audio UI)
-      |
-      +--> window.RT.init(url, bearer) -> window.RT.connect()
-      |          |
-      |          +--> WebRTC: createOffer -> setLocalDescription
-      |          |                     |
-      |          |                     -> POST /v1/realtime/calls -> setRemoteDescription
-      |          |
-      |          +--> On track added -> audio playback
-      |          |
-      |          +--> DataChannel open -> session.created
-      |
-      +--> window.RT.updateSession(patch) -> session.update
-      |
-      +--> conversation.item.create / response.create (via DataChannel)
-``` 
-
-Notes:
-- Offer/answer via `POST /v1/realtime/calls`; audio track added → playback; **DataChannel open** → `session.created`.
-- Session updates (e.g., model/audio/VAD) are sent via `window.RT.updateSession(patch)` → `session.update`.
-
-<br>
-
-___
-
-## Deployment Diagram - VCL App + WebView2 + OpenAI Realtime
-Clarifies the runtime footprint (EXE, WebView2Loader.dll, local web resources) and Internet calls (client_secrets + WebRTC calls).
-
-### Figure 3 - Deployment
-This diagram: shows what runs locally vs. what goes over the network.
-
-```text
-[Windows Machine]
-      |
-      +-- [Process: Delphi VCL Application (.exe)]
-              |
-              +-- [TEdgeRealtimeControl / TEdgeRealtimeWire]
-              |        |
-              |        +-- [TEdgeBrowser (WebView2)]
-              |        |       - Native WebRTC (PC, DC)
-              |        |       - Bridge: window.chrome.webview
-              |        |
-              |        +-- [Local web resources] (WebPath, e.g., audio.html)
-              |
-              +-- [Dependency] WebView2Loader.dll
-
-      |
-      +-- Internet
-             |
-             +-- [OpenAI Realtime REST]
-             |       - POST /v1/realtime/client_secrets → EPHEMERAL KEY
-             |
-             +-- [OpenAI Realtime WebRTC]
-                     - POST /v1/realtime/calls (SDP)
-                     - Audio stream + DataChannel "oai-events"
-```
-
-Notes:
-- Local assets (e.g., `audio.html`, JS) are loaded by `TEdgeBrowser`; the **native** Edge WebRTC engine is used (PC/DC).
-- Bridge is `window.chrome.webview`.
-- Internet endpoints:
-  - `POST /v1/realtime/client_secrets` → **ephemeral** key
-  - `POST /v1/realtime/calls` (SDP) → answer; media + **oai-events** DataChannel thereafter.
-
-<br>
-
-___
-
-## Authentication (ephemeral secrets)
-- The long-lived key is resolved **in Delphi** (env/registry) and exchanged for a short-lived **client secret** used by Edge for the session.
-- No durable secret is injected into the page; short TTL; renew on reconnect.
-
-> Session loop example: `ResolveLongKey → POST /client_secret → RT.connect(secret) → WebRTC`.
-
-### Figure 4 : Authentication Flow (API key → client_secrets → session init)
-This diagram: indispensable for a secure client-side integration. The component resolves the key, creates a **short-lived** client_secret, then initializes WebRTC with that bearer; this matches the Realtime API (`client_secrets` + WebRTC `calls`).
-
-```text
-[VCL Application]
-    |
-    +-- Resolve API Key (env/registry/prompt)
-    v
-[Realtime Engine]
-    |
-    +-- Create Client Secret (expires_after, session)
-    |         |
-    |         +--> POST OpenAI /v1/realtime/client_secrets
-    |               -> returns EPHEMERAL KEY
-    v
-[Edge WebView2 / window.RT]
-    |
-    +-- init(url, bearer = EPHEMERAL KEY) -> connect()
-    |         +-- POST /v1/realtime/calls (SDP) -> Answer
-    v
-[WebRTC session established] -> DataChannel "oai-events"
-```
-
-Notes:
-- Only the **ephemeral** secret is provided to `window.RT.init(...)`.
-- The long-lived key never reaches the browser context.
-
-<br>
-
-___
-
-## Reconnect / AutoResume - PeerConnection loss and recovery
-Documents robustness: disconnection events, clean close, reconnection, and optional re-application of parameters/history.
-
-### Figure 5 : Reconnect / AutoResume Sequence
-This diagram: shows the lifecycle on disconnect (`OnRTPcState = disconnected/failed`), controlled shutdown, and restart; if `AutoResume = True`, re-inject history and re-apply session settings.
-
-```text
-[Active Session]
-    |
-OnRTPcState = disconnected/failed  -> OnClosed
-    |
-Controlled shutdown:
-  - window.RT.close() (page)
-  - TEdgeRealtimeWire.Close()
-    |
-Reconnection:
-  - WebView2 + RT.init/RT.connect()
-  - createOffer → /v1/realtime/calls → setRemoteDescription
-    |
-DataChannel open → OnRTDataChannel / OnRTOpen / OnRTPcState
-    |
-AutoResume = True?
-  - InjectFromFile(...) (history)
-  - session.update (model/audio/VAD)
-    |
-Operational session → OnRTListen (oai_event)
-```
-
-Notes:
-- Close sequence: `window.RT.close()` (page) + `TEdgeRealtimeWire.Close()` (Delphi).
-- Reconnect: `RT.init/RT.connect()` → new offer → `/v1/realtime/calls` → set remote answer → DataChannel open → `OnRTDataChannel/OnRTOpen/OnRTPcState`.
-- Optional resume: `InjectFromFile(...)` (history) + `session.update` (model/audio/VAD).
-
-<br>
-
-___
-
-## Component Surface (API)
-### Properties (excerpt)
-- `TurnDetection`: `semantic_vad` (default) | `server_vad` | `null` (manual control).
-- `VadSemantic`: pass-through knobs for eagerness/interrupt behavior **as supported by the Realtime API**.
-- `VadServer`: pass-through knobs (`threshold`, `silence_ms`, `prefix_padding_ms`, `idle_timeout_ms`) **when/if exposed by the API**.
-- `PersistOptions`: simple persistence for developer profiles.
-
-> Note: VAD behavior is controlled by the Realtime API. The component **does not implement local VAD**; it only configures/forwards supported settings or allows **manual control** when `TurnDetection = null`.
-
-### Methods (excerpt)
-- `Connect`, `Disconnect`, session/PeerConnection lifecycle.
-- `Commit`, end the user turn when `TurnDetection = null`.
-- `ResponseCreate`, explicit response request (aligned with Realtime).
-
-### Events (excerpt)
-- `OnRTOpen`, `OnRTPcState`, `OnRTDataChannel`, `OnRTListen`, `OnRTVolumeChanged`, `OnRTMicClick`, `OnRTError`.
+Each guide is self-contained and can be read independently.  
+Together, they provide the **full technical picture** behind the POC.
 
 <br>
 
@@ -316,3 +114,12 @@ ___
 
 ## License
 This project is licensed under the [MIT](https://choosealicense.com/licenses/mit/) License.
+
+___
+
+<br>
+
+## Final Note
+
+This repository is a **proof of concept** published for documentation and reference.  
+Future updates are not guaranteed, but the project remains available as a basis or inspiration for anyone exploring **Delphi VCL + WebView2 + OpenAI Realtime**.
