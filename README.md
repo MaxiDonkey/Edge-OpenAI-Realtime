@@ -69,6 +69,9 @@ For detailed design notes and technical explanations, see the following guides:
 - [Component Surface](./guides/component-surface.md)  
   Details the public API of the VCL component (properties, methods, events).
 
+- [Realtime Sources](./guides/realtime-sources.md)  
+  Self-contained implementation of the latest OpenAI Realtime API (Sept. 2025), with support for **functions** and **remote MCP tools**.
+
 Each guide is self-contained and can be read independently.  
 Together, they provide the **full technical picture** behind the POC.
 
