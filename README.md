@@ -12,7 +12,7 @@ A **VCL** component that encapsulates a **UI-free Realtime** layer and an **Edge
 <br>
 
 >[!WARNING]
-> **TL;DR — Executive Summary**
+> **TL;DR - Executive Summary**
 >- **What it is**: a palette-ready VCL component; a UI-free Realtime layer; and an Edge/WebView2 adapter that hosts WebRTC and bridges Delphi ⇄ JS.
 >- **What it proves**: live voice to voice; default **semantic_vad**; user **barge-in**; audio playback handled by Edge; rich events to observe session state.
 >- **What it does *not* try to do**: native WebRTC stack outside Edge, production packaging, custom audio processing (AEC/AGC), or cloud storage.  
