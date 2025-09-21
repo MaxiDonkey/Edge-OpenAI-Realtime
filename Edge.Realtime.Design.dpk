@@ -1,0 +1,75 @@
+package Edge.Realtime.Design;
+
+{$R *.res}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS ON}
+{$RANGECHECKS ON}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$ENDIF IMPLICITBUILDING}
+{$IMPLICITBUILD ON}
+
+requires
+  rtl,
+  vcl,
+  vcledge,
+  RESTComponents,
+  DesignIde;
+
+contains
+  Edge.Realtime.Control in 'source\control\Edge.Realtime.Control.pas',
+  Edge.Realtime.Register in 'source\control\Edge.Realtime.Register.pas',
+  Audio.JSON.Parser2 in 'source\edge\Audio.JSON.Parser2.pas',
+  Audio.Web.Assets in 'source\edge\Audio.Web.Assets.pas',
+  Edge.Audio.Events2 in 'source\edge\Edge.Audio.Events2.pas',
+  Edge.Audio.Interfaces in 'source\edge\Edge.Audio.Interfaces.pas',
+  Edge.Audio.JsBridge in 'source\edge\Edge.Audio.JsBridge.pas',
+  Edge.Audio2 in 'source\edge\Edge.Audio2.pas',
+  Edge.Realtime.Bridge in 'source\edge\Edge.Realtime.Bridge.pas',
+  Edge.Realtime.History in 'source\edge\Edge.Realtime.History.pas',
+  Edge.Registry.Helper in 'source\edge\Edge.Registry.Helper.pas',
+  Edge.Sessions.FileFinder in 'source\edge\Edge.Sessions.FileFinder.pas',
+  Edge.WebRTC.Adapter in 'source\edge\Edge.WebRTC.Adapter.pas',
+  JSON.PolymorphicMapper in 'source\realtime\JSON.PolymorphicMapper.pas',
+  Realtime.API.Client in 'source\realtime\Realtime.API.Client.pas',
+  Realtime.API.JsonParams in 'source\realtime\Realtime.API.JsonParams.pas',
+  Realtime.Async.Params in 'source\realtime\Realtime.Async.Params.pas',
+  Realtime.Async.Promise in 'source\realtime\Realtime.Async.Promise.pas',
+  Realtime.Async.Support in 'source\realtime\Realtime.Async.Support.pas',
+  Realtime.ClientSecrets in 'source\realtime\Realtime.ClientSecrets.pas',
+  Realtime.Conversation.HistoryExtractor in 'source\realtime\Realtime.Conversation.HistoryExtractor.pas',
+  Realtime.Conversation in 'source\realtime\Realtime.Conversation.pas',
+  Realtime.DTOs in 'source\realtime\Realtime.DTOs.pas',
+  Realtime.Errors in 'source\realtime\Realtime.Errors.pas',
+  Realtime.Events.DTOs.Helper in 'source\realtime\Realtime.Events.DTOs.Helper.pas',
+  Realtime.Events.Server in 'source\realtime\Realtime.Events.Server.pas',
+  Realtime.Exceptions in 'source\realtime\Realtime.Exceptions.pas',
+  Realtime.InputAudioBuffer in 'source\realtime\Realtime.InputAudioBuffer.pas',
+  Realtime.OutputAudioBuffer in 'source\realtime\Realtime.OutputAudioBuffer.pas',
+  Realtime.Params in 'source\realtime\Realtime.Params.pas',
+  Realtime in 'source\realtime\Realtime.pas',
+  Realtime.Response in 'source\realtime\Realtime.Response.pas',
+  Realtime.Schema in 'source\realtime\Realtime.Schema.pas',
+  Realtime.Session in 'source\realtime\Realtime.Session.pas',
+  Realtime.Types in 'source\realtime\Realtime.Types.pas',
+  WebRTC.Core in 'source\realtime\WebRTC.Core.pas';
+
+end.
