@@ -1,7 +1,7 @@
 # Edge-OpenAI-Realtime (POC VCL + WebView2)
 ![IDE Version](https://img.shields.io/badge/Delphi-12%20Athens-ffffba) 
 ![WebView2](https://img.shields.io/badge/WebView2-VCL-baffc9)
-![GitHub](https://img.shields.io/badge/Updated%20on%20August%2025,%202025-blue)
+![GitHub](https://img.shields.io/badge/Updated%20on%20September%2021,%202025-blue)
 
 <br>
 
@@ -9,15 +9,11 @@ ___
 
 A **VCL** component that encapsulates a **UI-free Realtime** layer and an **Edge/WebView2** (Chromium) adapter to drive **WebRTC** (audio + DataChannel) inside an embedded page, enabling **real-time voice interactions** with OpenAI’s Realtime API. The POC validates the end-to-end chain **inside Edge/WebView2** with conversational perceived latency, without reusing documentation sample code, and keeps the Edge adapter **swappable**.
 
-<br>
-
----
-
-## TL;DR
-- **What it is**: a palette-ready VCL component; a UI-free Realtime layer; and an Edge/WebView2 adapter that hosts WebRTC and bridges Delphi ⇄ JS.
-- **What it proves**: live voice to voice; default **semantic_vad**; user **barge-in**; audio playback handled by Edge; rich events to observe session state.
-- **What it does *not* try to do**: native WebRTC stack outside Edge, production packaging, custom audio processing (AEC/AGC), or cloud storage.  
-  _Note: **FMX is not targeted** because Embarcadero does not provide an Edge/WebView2 component for FMX; this is a platform constraint, not a POC choice._
+>[!WARNING]
+>- **What it is**: a palette-ready VCL component; a UI-free Realtime layer; and an Edge/WebView2 adapter that hosts WebRTC and bridges Delphi ⇄ JS.
+>- **What it proves**: live voice to voice; default **semantic_vad**; user **barge-in**; audio playback handled by Edge; rich events to observe session state.
+>- **What it does *not* try to do**: native WebRTC stack outside Edge, production packaging, custom audio processing (AEC/AGC), or cloud storage.  
+>  _Note: **FMX is not targeted** because Embarcadero does not provide an Edge/WebView2 component for FMX; this is a platform constraint, not a POC choice._
 
 <br>
 
@@ -30,7 +26,7 @@ Authentication uses **ephemeral client secrets**: no long-lived key in the page.
 
 <br>
 
----
+___
 
 ## POC Scope 
 This POC is **strictly** VCL + Edge/WebView2. **FMX is not targeted** because Embarcadero does not provide an Edge/WebView2 component for FMX. It **does not** include a native WebRTC stack outside Edge, **does not** cover productization (packaging/installer/signing), **does not** implement specialized audio processing (custom AEC/AGC), and **does not** address cloud storage or a production backend.
@@ -39,7 +35,7 @@ This POC is **strictly** VCL + Edge/WebView2. **FMX is not targeted** because Em
 
 <br>
 
----
+___
 
 ## Architecture
 ### Three-layer split
@@ -80,7 +76,6 @@ This diagram: gives the overall view (three layers: Realtime, Edge/WebView2, VCL
 [RTCPeerConnection] -- DataChannel "oai-events" --> (events)
           |
           +-- Remote Audio Track --> IEdgeAudio.Player
-
 ```
 
 Notes:
@@ -90,7 +85,7 @@ Notes:
 
 <br>
 
----
+___
 
 ## End-to-End Sequence (high level)
 1. **Edge init** → load an embedded page that exposes an `RT` JS module.
@@ -126,7 +121,6 @@ This diagram: makes explicit the initialization chain up to DataChannel exchange
       +--> window.RT.updateSession(patch) -> session.update
       |
       +--> conversation.item.create / response.create (via DataChannel)
-
 ``` 
 
 Notes:
@@ -135,7 +129,7 @@ Notes:
 
 <br>
 
----
+___
 
 ## Deployment Diagram - VCL App + WebView2 + OpenAI Realtime
 Clarifies the runtime footprint (EXE, WebView2Loader.dll, local web resources) and Internet calls (client_secrets + WebRTC calls).
@@ -144,19 +138,19 @@ Clarifies the runtime footprint (EXE, WebView2Loader.dll, local web resources) a
 This diagram: shows what runs locally vs. what goes over the network.
 
 ```text
-[Machine Windows]
+[Windows Machine]
       |
-      +-- [Processus: Application Delphi VCL (.exe)]
+      +-- [Process: Delphi VCL Application (.exe)]
               |
               +-- [TEdgeRealtimeControl / TEdgeRealtimeWire]
               |        |
               |        +-- [TEdgeBrowser (WebView2)]
-              |        |       - WebRTC natif (PC, DC)
-              |        |       - Pont: window.chrome.webview
+              |        |       - Native WebRTC (PC, DC)
+              |        |       - Bridge: window.chrome.webview
               |        |
-              |        +-- [Ressources web locales] (WebPath, ex: audio.html)
+              |        +-- [Local web resources] (WebPath, e.g., audio.html)
               |
-              +-- [Dépendance] WebView2Loader.dll
+              +-- [Dependency] WebView2Loader.dll
 
       |
       +-- Internet
@@ -166,8 +160,7 @@ This diagram: shows what runs locally vs. what goes over the network.
              |
              +-- [OpenAI Realtime WebRTC]
                      - POST /v1/realtime/calls (SDP)
-                     - Flux audio + DataChannel "oai-events"
-
+                     - Audio stream + DataChannel "oai-events"
 ```
 
 Notes:
@@ -179,7 +172,7 @@ Notes:
 
 <br>
 
----
+___
 
 ## Authentication (ephemeral secrets)
 - The long-lived key is resolved **in Delphi** (env/registry) and exchanged for a short-lived **client secret** used by Edge for the session.
@@ -191,7 +184,7 @@ Notes:
 This diagram: indispensable for a secure client-side integration. The component resolves the key, creates a **short-lived** client_secret, then initializes WebRTC with that bearer; this matches the Realtime API (`client_secrets` + WebRTC `calls`).
 
 ```text
-[Application VCL]
+[VCL Application]
     |
     +-- Resolve API Key (env/registry/prompt)
     v
@@ -200,15 +193,14 @@ This diagram: indispensable for a secure client-side integration. The component 
     +-- Create Client Secret (expires_after, session)
     |         |
     |         +--> POST OpenAI /v1/realtime/client_secrets
-    |               -> return EPHEMERAL KEY
+    |               -> returns EPHEMERAL KEY
     v
 [Edge WebView2 / window.RT]
     |
     +-- init(url, bearer = EPHEMERAL KEY) -> connect()
     |         +-- POST /v1/realtime/calls (SDP) -> Answer
     v
-[WebRTC session établie] -> DataChannel "oai-events"
-
+[WebRTC session established] -> DataChannel "oai-events"
 ```
 
 Notes:
@@ -217,7 +209,7 @@ Notes:
 
 <br>
 
----
+___
 
 ## Reconnect / AutoResume - PeerConnection loss and recovery
 Documents robustness: disconnection events, clean close, reconnection, and optional re-application of parameters/history.
@@ -226,26 +218,25 @@ Documents robustness: disconnection events, clean close, reconnection, and optio
 This diagram: shows the lifecycle on disconnect (`OnRTPcState = disconnected/failed`), controlled shutdown, and restart; if `AutoResume = True`, re-inject history and re-apply session settings.
 
 ```text
-[Session active]
+[Active Session]
     |
 OnRTPcState = disconnected/failed  -> OnClosed
     |
-Fermeture contrôlée:
+Controlled shutdown:
   - window.RT.close() (page)
   - TEdgeRealtimeWire.Close()
     |
-Reconnexion:
+Reconnection:
   - WebView2 + RT.init/RT.connect()
   - createOffer → /v1/realtime/calls → setRemoteDescription
     |
-DataChannel ouvert → OnRTDataChannel / OnRTOpen / OnRTPcState
+DataChannel open → OnRTDataChannel / OnRTOpen / OnRTPcState
     |
-AutoResume = True ?
-  - InjectFromFile(...) (historique)
+AutoResume = True?
+  - InjectFromFile(...) (history)
   - session.update (model/audio/VAD)
     |
-Session opérationnelle → OnRTListen (oai_event)
-
+Operational session → OnRTListen (oai_event)
 ```
 
 Notes:
@@ -255,7 +246,7 @@ Notes:
 
 <br>
 
----
+___
 
 ## Component Surface (API)
 ### Properties (excerpt)
@@ -274,7 +265,9 @@ Notes:
 ### Events (excerpt)
 - `OnRTOpen`, `OnRTPcState`, `OnRTDataChannel`, `OnRTListen`, `OnRTVolumeChanged`, `OnRTMicClick`, `OnRTError`.
 
----
+<br>
+
+___
 
 ## Quick Demo (POC)
 1. **Prereqs**
@@ -289,7 +282,7 @@ Notes:
 
 <br>
 
----
+___
 
 ## Acceptance Criteria
 - Smooth voice↔voice dialog with **conversational perceived latency**.
@@ -300,7 +293,7 @@ Notes:
 
 <br>
 
----
+___
 
 ## Caller Example 
 The component ships with a demo app that contains the **reference caller**. To avoid drift, this README **does not copy** the code; refer to:
@@ -316,8 +309,7 @@ The component ships with a demo app that contains the **reference caller**. To a
 
 <br>
 
----
+___
 
 ## License
-To be specified for POC distribution (default: internal).
-
+This project is licensed under the [MIT](https://choosealicense.com/licenses/mit/) License.
