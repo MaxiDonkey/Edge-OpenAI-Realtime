@@ -19,5 +19,5 @@
 <br>
 
 <p align="center">
-  <img src="images/Inspector.png" width="300"/>
+  <img src="../images/Inspector.png" width="300"/>
 </p>
