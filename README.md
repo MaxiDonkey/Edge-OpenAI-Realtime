@@ -43,25 +43,25 @@ ___
 ## Guides
 
 The README only provides a **concise overview** of the project.  
-For in-depth documentation, design notes, and technical details, see the guides:
+For detailed design notes and technical explanations, see the following guides:
 
 - [Architecture](./guides/architecture.md)  
-  Overview of the three-layer split (**Realtime**, **Edge/WebView2**, **VCL**) and orchestration.
-
-- [Authentication](./guides/authentication.md)  
-  How long-lived keys are resolved in Delphi and exchanged for short-lived **ephemeral secrets**.
-
-- [Component Surface](./guides/component-surface.md)  
-  Public API of the VCL component (properties, methods, events).
-
-- [Deployment Diagram](./guides/deployment-diagram.md)  
-  Runtime footprint (EXE, WebView2Loader.dll, local web resources) and external calls.
+  Explains the three-layer split (**Realtime**, **Edge/WebView2**, **VCL**) and their orchestration.
 
 - [End-to-End Sequence](./guides/end-to-end-Sequence.md)  
   Step-by-step flow from initialization to WebRTC negotiation and DataChannel usage.
 
+- [Deployment Diagram](./guides/deployment-diagram.md)  
+  Shows the runtime footprint (EXE, WebView2Loader.dll, local web resources) and external calls.
+
+- [Authentication](./guides/authentication.md)  
+  Describes how long-lived keys are resolved in Delphi and exchanged for short-lived **ephemeral secrets**.
+
 - [Reconnect & AutoResume](./guides/reconnect-autoResume.md)  
-  Lifecycle on disconnection, controlled shutdown, reconnection, and optional history/session resume.
+  Covers the lifecycle during disconnection, controlled shutdown, reconnection, and optional session resume.
+
+- [Component Surface](./guides/component-surface.md)  
+  Details the public API of the VCL component (properties, methods, events).
 
 Each guide is self-contained and can be read independently.  
 Together, they provide the **full technical picture** behind the POC.
