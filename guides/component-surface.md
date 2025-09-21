@@ -5,7 +5,8 @@
 - `VadServer`: pass-through knobs (`threshold`, `silence_ms`, `prefix_padding_ms`, `idle_timeout_ms`) **when/if exposed by the API**.
 - `PersistOptions`: simple persistence for developer profiles.
 
-> Note: VAD behavior is controlled by the Realtime API. The component **does not implement local VAD**; it only configures/forwards supported settings or allows **manual control** when `TurnDetection = null`.
+> [!NOTE]
+> VAD behavior is controlled by the Realtime API. The component **does not implement local VAD**; it only configures/forwards supported settings or allows **manual control** when `TurnDetection = null`.
 
 ## Methods (excerpt)
 - `Connect`, `Disconnect`, session/PeerConnection lifecycle.
@@ -14,3 +15,9 @@
 
 ## Events (excerpt)
 - `OnRTOpen`, `OnRTPcState`, `OnRTDataChannel`, `OnRTListen`, `OnRTVolumeChanged`, `OnRTMicClick`, `OnRTError`.
+
+<br>
+
+<p align="center">
+  <img src="images/Inspector.png" width="300"/>
+</p>
