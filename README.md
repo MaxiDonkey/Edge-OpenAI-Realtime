@@ -9,6 +9,8 @@ ___
 
 A **VCL** component that encapsulates a **UI-free Realtime** layer and an **Edge/WebView2** (Chromium) adapter to drive **WebRTC** (audio + DataChannel) inside an embedded page, enabling **real-time voice interactions** with OpenAI’s Realtime API. The POC validates the end-to-end chain **inside Edge/WebView2** with conversational perceived latency, without reusing documentation sample code, and keeps the Edge adapter **swappable**.
 
+<br>
+
 >[!WARNING]
 > **TL;DR — Executive Summary**
 >- **What it is**: a palette-ready VCL component; a UI-free Realtime layer; and an Edge/WebView2 adapter that hosts WebRTC and bridges Delphi ⇄ JS.
