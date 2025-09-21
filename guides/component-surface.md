@@ -18,6 +18,8 @@
 
 <br>
 
+## View the component’s properties in the Object Inspector.
+
 <p align="center">
   <img src="../images/Inspector.png" width="300"/>
 </p>
