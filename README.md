@@ -20,6 +20,12 @@ A **VCL** component that encapsulates a **UI-free Realtime** layer and an **Edge
 
 <br>
 
+> **Built with Delphi 12 Community Edition** (v12.1 Patch 1)  
+>The wrapper itself is MIT-licensed.  
+>You can compile and test it free of charge with Delphi CE; any recent commercial Delphi edition works as well.
+
+<br>
+
 ---
 
 ## Objective
