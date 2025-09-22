@@ -264,7 +264,7 @@ type
   ///   on a separate ASR (Automatic Speech Recognition) model. The transcript may diverge somewhat from
   ///   the model's interpretation, and should be treated as a rough guide.
   /// </remarks>
-  TConversation_item_input_audio_tanscription_completed = Realtime.Events.Server.TConversation_item_input_audio_tanscription_completed;
+  TConversation_item_input_audio_transcription_completed = Realtime.Events.Server.TConversation_item_input_audio_transcription_completed;
 
   /// <summary>
   ///   Returned when the text value of an input audio transcription content part is updated with incremental

@@ -50,7 +50,7 @@ type
 
   TConversation_item_retrieved = TConversation_item_added;
 
-  TConversation_item_input_audio_tanscription_completed = class(TRawJsonBase)
+  TConversation_item_input_audio_transcription_completed = class(TRawJsonBase)
   private
     FType: string;
     [JsonNameAttribute('content_index')] FContentIndex: Int64;
@@ -68,7 +68,7 @@ type
     property Transcript: string read FTranscript write FTranscript;
     property Usage: TUsage read FUsage write FUsage;
     destructor Destroy; override;
-    class function FromJson(const Value: string): TConversation_item_input_audio_tanscription_completed;
+    class function FromJson(const Value: string): TConversation_item_input_audio_transcription_completed;
   end;
 
   TConversation_item_input_audio_transcription_delta = class(TRawJsonBase)
@@ -570,9 +570,9 @@ type
 
 implementation
 
-{ TConversation_item_input_audio_tanscription_completed }
+{ TConversation_item_input_audio_transcription_completed }
 
-destructor TConversation_item_input_audio_tanscription_completed.Destroy;
+destructor TConversation_item_input_audio_transcription_completed.Destroy;
 begin
   for var Item in FLogprobs do
     Item.Free;
@@ -581,10 +581,10 @@ begin
   inherited;
 end;
 
-class function TConversation_item_input_audio_tanscription_completed.FromJson(
-  const Value: string): TConversation_item_input_audio_tanscription_completed;
+class function TConversation_item_input_audio_transcription_completed.FromJson(
+  const Value: string): TConversation_item_input_audio_transcription_completed;
 begin
-  Result := TRawJsonBase.FromJson<TConversation_item_input_audio_tanscription_completed>(Value);
+  Result := TRawJsonBase.FromJson<TConversation_item_input_audio_transcription_completed>(Value);
 end;
 
 { TResponse_output_audio_transcript_done }
